@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MP3 to WMA Converter</title>
+</head>
+<body>
+  <h1>Convert MP3 to WMA</h1>
+  <form id="uploadForm" enctype="multipart/form-data">
+    <input type="file" name="audio" accept=".mp3" required>
+    <button type="submit">Convert</button>
+  </form>
+  <script>
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+
+
+      try {
+        const response = await fetch('http://localhost:3000/convert', {
+          method: 'POST',
+          body: formData
+        });
+
+
+        if (!response.ok) throw new Error('Conversion failed');
+        
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'converted.wma';
+        a.click();
+        window.URL.revokeObjectURL(url);
+      } catch (error) {
+        alert(error.message);
+      }
+    });
+  </script>
+</body>
+</html>
+
